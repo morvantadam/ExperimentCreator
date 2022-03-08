@@ -32,7 +32,7 @@ int main() {
 	cout << "makeExp.pl -train\n";
 	cout << "<<<<SKIP THIS LINE, USER INPUT REQUIRED>>>>\n";
 	//Below are relative links that my "atm1042" home directory. If this is standardized for others, find a way to make these absolute.
-	cout << "cp ~/sphinx_LDA_Random.cfg etc/sphinx_train.cfg\n";
+	cout << "<<<<EDIT ETC/SPHINX_TRAIN.CFG YOURSELF>>>>\n";
 	cout << "cp ~/mlltRandomTemplate.py python/sphinx/mllt.py\n";
 	cout << "genFeats.pl -t\n";
 	cout << "nohup scripts_pl/RunAll.pl &\n";
@@ -43,7 +43,7 @@ int main() {
 	cout << "lm_create.pl trans_parsed\n";
 	cout << "\n\n<SECTION 3, CURRENTLY ONLY SET TO MATCHING TRAINED LDA DECODE>\n";
 	cout << "cd /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc\n";
-	cout << "awk {print $i} /mnt/main/corpus/switchboard/" << expLength << "test/trans/train.trans >> /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc/" << subExp << "_decode.fileids\n";
+	cout << "awk \'{print $i}\' /mnt/main/corpus/switchboard/" << expLength << "/test/trans/train.trans >> /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc/" << subExp << "_decode.fileids\n";
 	cout << "nohup run_decode_lda.pl " << mainExp << "/" << subExp << " " << mainExp << "/" << subExp << " 1000 &\n";
 	cout << "\n\n<SECTION 4>\n";
 	cout << "parseDecode.pl decode.log hyp.trans\n";
@@ -101,7 +101,6 @@ void expSetup(string &mainExp, string &subExp, string &expLength, string &decode
 	string lengthOptions[lengthOptionsSize] = { "1hr", "5hr", "30hr" };
 	//Get experiment length, error check to see if input matches list of possible experiments.
 	expLength = evalLoop("Please enter the length of the experiment you want to run (e.g. \"1hr\", \"5hr\", \"30hr\"...)", lengthOptions, lengthOptionsSize);
-	cout << "Please enter the form of decode you wish to perform.";
 	const int decodeOptionsSize = 1;
 	string decodeOptions[decodeOptionsSize] = { "RandomLDAExperiment" };
 	decodeMethod = evalLoop("Please enter the form of decode you wish to perform.", decodeOptions, decodeOptionsSize);
