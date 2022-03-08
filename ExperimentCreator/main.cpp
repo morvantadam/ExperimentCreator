@@ -24,11 +24,11 @@ void main() {
 	cout << "nohup scripts_pl/RunAll.pl &\n";
 	cout << "\n\n<SECTION 2>\n";
 	cout << "mkdir LM; cd LM;\n";
-	cout << "cp -i /mnt/main/corpus/switchboard/" << expLength << "train/trans.train trans_unedited\n";
+	cout << "cp -i /mnt/main/corpus/switchboard/" << expLength << "/train/trans/trans.train trans_unedited\n";
 	cout << "parseLMTrans.pl trans_unedited trans_parsed\n";
 	cout << "lm_create.pl trans_parsed\n";
 	cout << "\n\n<SECTION 3, CURRENTLY ONLY SET TO MATCHING TRAINED LDA DECODE>\n";
-	cout << "cd etc\n";
+	cout << "cd /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc\n";
 	cout << "awk {print $i} /mnt/main/corpus/switchboard/" << expLength << "test/trans/train.trans >> /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc/" << subExp << "_decode.fileids\n";
 	cout << "nohup run_decode_lda.pl " << mainExp << "/" << subExp << " " << mainExp << "/" << subExp << " 1000 &\n";
 	cout << "\n\n<SECTION 4>\n";
