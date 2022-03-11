@@ -26,24 +26,25 @@ int main() {
 	bool batch = batchSet();
 	//Strings used to hold data for creating directories and determining processes.
 	string mainExp, subExp, expLength, decodeMethod;
-	expSetup(mainExp, subExp, expLength, decodeMethod);	
+	expSetup(mainExp, subExp, expLength, decodeMethod);
 	cout << "\n\n<SECTION 1>\n";
 	cout << "cd /mnt/main/Exp/" << mainExp << "/" << subExp << "/\n";
 	cout << "makeExp.pl -train\n";
 	cout << "<<<<SKIP THIS LINE, USER INPUT REQUIRED>>>>\n";
 	//Below are relative links that my "atm1042" home directory. If this is standardized for others, find a way to make these absolute.
-	cout << "cp ~/sphinx_LDA_Random.cfg etc/sphinx_train.cfg\n";
+	cout << "<<<<EDIT ETC/SPHINX_TRAIN.CFG YOURSELF>>>>\n";
 	cout << "cp ~/mlltRandomTemplate.py python/sphinx/mllt.py\n";
 	cout << "genFeats.pl -t\n";
 	cout << "nohup scripts_pl/RunAll.pl &\n";
 	cout << "\n\n<SECTION 2>\n";
 	cout << "mkdir LM; cd LM;\n";
-	cout << "cp -i /mnt/main/corpus/switchboard/" << expLength << "train/trans.train trans_unedited\n";
+	cout << "cp -i /mnt/main/corpus/switchboard/" << expLength << "train/trans/trans.train trans_unedited\n";
 	cout << "parseLMTrans.pl trans_unedited trans_parsed\n";
 	cout << "lm_create.pl trans_parsed\n";
 	cout << "\n\n<SECTION 3, CURRENTLY ONLY SET TO MATCHING TRAINED LDA DECODE>\n";
+	cout << "cd /mnt/main/Exp/" << mainExp << "/" << subExp << "/\n";
 	cout << "cd etc\n";
-	cout << "awk {print $i} /mnt/main/corpus/switchboard/" << expLength << "test/trans/train.trans >> /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc/" << subExp << "_decode.fileids\n";
+	cout << "awk \'{print $i}\' /mnt/main/corpus/switchboard/" << expLength << "/test/trans/train.trans >> /mnt/main/Exp/" << mainExp << "/" << subExp << "/etc/" << subExp << "_decode.fileids\n";
 	cout << "nohup run_decode_lda.pl " << mainExp << "/" << subExp << " " << mainExp << "/" << subExp << " 1000 &\n";
 	cout << "\n\n<SECTION 4>\n";
 	cout << "parseDecode.pl decode.log hyp.trans\n";
@@ -59,7 +60,7 @@ bool batchSet() {
 	if (result == "y") {
 		boolSet = 1;
 	}
-	
+
 	else {
 		boolSet = 0;
 	}
@@ -92,7 +93,7 @@ string evalLoop(string prompt, string options[], int optionSize) {
 	return input;
 }
 
-void expSetup(string &mainExp, string &subExp, string &expLength, string &decodeMethod) {
+void expSetup(string& mainExp, string& subExp, string& expLength, string& decodeMethod) {
 	//Gets main exp number.
 	mainExp = valueCheck("Please enter the main experiment number: ", 4);
 	//Gets sub-exp number.
@@ -130,7 +131,7 @@ string valueCheck(string prompt, int numOfValues) {
 		else {
 			loop = 1;
 		}
-		if (loop == 1){
+		if (loop == 1) {
 			cout << "ERROR: invalid input. Input should be all numbers and " << numOfValues << " digits long.\n";
 		}
 	}
