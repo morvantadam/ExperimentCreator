@@ -6,6 +6,14 @@ using namespace std;
 //Used to set a boolean for whether or not this is a batch job.
 bool batchSet();
 
+//This is likely going to be where most of the output takes place. Depending on the type of experiment and whether or not it's a batch job, it will edit and format the commands accordingly.
+//Arg 1: The boolean for whether or not this is a batch job. If false, it will display each command one-per-line.
+//Arg 2: The main experiment number
+//Arg 3: The sub experiment number
+//Arg 4: The length of the experiment
+//Arg 5: The type of experiment to be used.
+void batchPrint(bool, string, string, string, string);
+
 //Used to return a string that determines which method is used. Loops if an unexpected input is entered.
 //Arg 1: The prompt to be displayed.
 //Arg 2: The array of strings that are accepted answers.
@@ -27,6 +35,8 @@ int main() {
 	//Strings used to hold data for creating directories and determining processes.
 	string mainExp, subExp, expLength, decodeMethod;
 	expSetup(mainExp, subExp, expLength, decodeMethod);
+	batchPrint(batch, mainExp, subExp, expLength, decodeMethod);
+	/*
 	cout << "\n\n<SECTION 1>\n";
 	cout << "cd /mnt/main/Exp/" << mainExp << "/" << subExp << "/\n";
 	cout << "makeExp.pl -train\n";
@@ -48,9 +58,11 @@ int main() {
 	cout << "\n\n<SECTION 4>\n";
 	cout << "parseDecode.pl decode.log hyp.trans\n";
 	cout << "sclite -r " << subExp << "_train.trans -h hyp.trans -i swb >> scoring.log\n";
+	*/
 	return 0;
 }
 
+//Used to set a boolean for whether or not this is a batch job.
 bool batchSet() {
 	bool boolSet;
 	const int optionSize = 2;
@@ -66,6 +78,78 @@ bool batchSet() {
 	return boolSet;
 }
 
+//This is likely going to be where most of the output takes place. Depending on the type of experiment and whether or not it's a batch job, it will edit and format the commands accordingly.
+//Arg 1: The boolean for whether or not this is a batch job. If false, it will display each command one-per-line.
+//Arg 2: The main experiment number
+//Arg 3: The sub experiment number
+//Arg 4: The length of the experiment
+//Arg 5: The type of experiment to be used.
+void batchPrint(bool batch, string mainExp, string subExp, string expLength, string decodeMethod) {
+	//The constant number of commands used to create the output. Different experiments may need to interject their content after certain lines.
+	const int COMMANDS = 21;
+	//The array of strings used to generate the output.
+	string commands[COMMANDS] = {
+		"cd /mnt/main/Exp/" + mainExp + "/" + subExp + "/",
+		"makeExp.pl -train",
+		"",
+		"!",
+		"<<BE SURE TO EDIT THE SPHINX CONFIG FILE>>",
+		"cp ~/mlltRandomTemplate.py python/sphinx/mllt.py",
+		"genFeats.pl -t",
+		"!",
+		"nohup scripts_pl/RunAll.pl &",
+		"",
+		"mkdir LM; cd LM",
+		"cp -i /mnt/main/corpus/switchboard/" + expLength + "/train/trans/trans.train trans_unedited",
+		"parseLMTrans.pl trans_unedited trans_parsed",
+		"lm_create.pl trans_parsed",
+		"cd /mnt/main/Exp/" + mainExp + "/" + subExp + "/etc",
+		"awk \'{print $i}\' /mnt/main/corpus/switchboard/" + expLength + "/test/trans/train.trans /mnt/main/Exp/ " + mainExp + "/" + subExp + "/etc/" + subExp + "_decode.fileids",
+		"!",
+		"nohup run_decode_lda.pl " + mainExp + "/" + subExp + " " + mainExp + "/" + subExp + " 1000 &",
+		"",
+		"parseDecode.pl decode.log hyp.trans",
+		"sclite -r " + subExp + "_train.trans -h hyp.trans -i swb >> scoring.log"
+	};
+	//Determines if the output is a batch output 
+	if (batch == 1) {
+		//Cycles through each of the commands listed above.
+		for (int i = 0; i < COMMANDS; i++) {
+			//If the command is empty, it is output at two new lines.
+			if (commands[i] == "") {
+				cout << "\n\n";
+			}
+			//If the command has an exclamation point, the next line is printed without a semicolon ";".
+			else if (commands[i] == "!") {
+				i++;
+				cout << commands[i] << "\n";
+			}
+			//Otherwise, each command will be output with a semicolon ";".
+			else {
+				cout << commands[i] + "; ";
+			}
+		}
+	}
+	//The methodology for this set is the same as the last, except that instead of semicolons, new lines are outputted instead.
+	else {
+		for (int i = 0; i < COMMANDS; i++) {
+			if (commands[i] == "") {
+				cout << "\n\n";
+			}
+			else if (commands[i] == "!") {
+				i++;
+				cout << commands[i] << "\n";
+			}
+			else {
+				cout << commands[i] + "\n";
+			}
+		}
+	}
+}
+
+//Used to return a string that determines which method is used. Loops if an unexpected input is entered.
+//Arg 1: The prompt to be displayed.
+//Arg 2: The array of strings that are accepted answers.
 string evalLoop(string prompt, string options[], int optionSize) {
 	bool loop = 1;
 	string input;
@@ -92,6 +176,7 @@ string evalLoop(string prompt, string options[], int optionSize) {
 	return input;
 }
 
+//Used to setup the strings used to generate file paths or determine the type of experiment to be run.
 void expSetup(string& mainExp, string& subExp, string& expLength, string& decodeMethod) {
 	//Gets main exp number.
 	mainExp = valueCheck("Please enter the main experiment number: ", 4);
@@ -106,12 +191,14 @@ void expSetup(string& mainExp, string& subExp, string& expLength, string& decode
 	decodeMethod = evalLoop("Please enter the form of decode you wish to perform.", decodeOptions, decodeOptionsSize);
 }
 
+//Uses a getline input and returns whatever is entered.
 string getUserInput() {
 	string userInput;
 	getline(cin, userInput);
 	return userInput;
 }
 
+//Checks to see that all values are numerical, and there is a predetermined number of values.
 string valueCheck(string prompt, int numOfValues) {
 	string input;
 	bool loop = 1;
