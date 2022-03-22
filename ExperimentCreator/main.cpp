@@ -100,7 +100,7 @@ void batchPrint(bool batch, string mainExp, string subExp, string expLength, str
 		"nohup scripts_pl/RunAll.pl &",
 		"",
 		"mkdir LM; cd LM",
-		"cp -i /mnt/main/corpus/switchboard/" + expLength + "/train/trans/trans.train trans_unedited",
+		"cp -i /mnt/main/corpus/switchboard/" + expLength + "/train/trans/train.trans trans_unedited",
 		"parseLMTrans.pl trans_unedited trans_parsed",
 		"lm_create.pl trans_parsed",
 		"cd /mnt/main/Exp/" + mainExp + "/" + subExp + "/etc",
