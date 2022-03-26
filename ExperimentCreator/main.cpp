@@ -104,7 +104,7 @@ void batchPrint(bool batch, string mainExp, string subExp, string expLength, str
 		"parseLMTrans.pl trans_unedited trans_parsed",
 		"lm_create.pl trans_parsed",
 		"cd /mnt/main/Exp/" + mainExp + "/" + subExp + "/etc",
-		"awk \'{print $i}\' /mnt/main/corpus/switchboard/" + expLength + "/test/trans/train.trans /mnt/main/Exp/ " + mainExp + "/" + subExp + "/etc/" + subExp + "_decode.fileids",
+		"awk \'{print $i}\' /mnt/main/corpus/switchboard/" + expLength + "/test/trans/train.trans /mnt/main/Exp/" + mainExp + "/" + subExp + "/etc/" + subExp + "_decode.fileids",
 		"!",
 		"nohup run_decode_lda.pl " + mainExp + "/" + subExp + " " + mainExp + "/" + subExp + " 1000 &",
 		"",
