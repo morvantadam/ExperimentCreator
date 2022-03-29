@@ -38,7 +38,7 @@ int main() {
 	cout << "nohup scripts_pl/RunAll.pl &\n";
 	cout << "\n\n<SECTION 2>\n";
 	cout << "mkdir LM; cd LM;\n";
-	cout << "cp -i /mnt/main/corpus/switchboard/" << expLength << "/train/trans/trans.train trans_unedited\n";
+	cout << "cp -i /mnt/main/corpus/switchboard/" << expLength << "/train/trans/train.trans trans_unedited\n";
 	cout << "parseLMTrans.pl trans_unedited trans_parsed\n";
 	cout << "lm_create.pl trans_parsed\n";
 	cout << "\n\n<SECTION 3, CURRENTLY ONLY SET TO MATCHING TRAINED LDA DECODE>\n";
